@@ -22,6 +22,12 @@ type Config struct {
 	UpdateInterval   int    `json:"update_interval"`     // Update interval in minutes
 }
 
+// PublicIP represents the structure of the response from the ipify.org API
+// containing the public IP address
+type PublicIP struct {
+	IP string `json:"ip"` // Public IP address as a string
+}
+
 // init_config creates a default configuration file (.env) if it doesn't exist
 // with placeholder values for Digital Ocean DNS updates
 func init_config() {
