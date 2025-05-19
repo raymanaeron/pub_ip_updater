@@ -19,12 +19,7 @@ type Config struct {
 	SubDomainName    string `json:"sub_domain_name"`     // Subdomain prefix (e.g. www)
 	RecordType       string `json:"record_type"`         // DNS record type (e.g. A, CNAME)
 	TTL              int    `json:"ttl"`                 // Time To Live value in seconds
-}
-
-// PublicIP represents the structure of the response from the ipify.org API
-// containing the public IP address
-type PublicIP struct {
-	IP string `json:"ip"` // Public IP address as a string
+	UpdateInterval   int    `json:"update_interval"`     // Update interval in minutes
 }
 
 // init_config creates a default configuration file (.env) if it doesn't exist
@@ -42,6 +37,7 @@ func init_config() {
 		file.WriteString("sub_domain_name=rayman\n")
 		file.WriteString("record_type=A\n")
 		file.WriteString("ttl=3600\n")
+		file.WriteString("update_interval=5\n")
 		fmt.Println(".env file created with placeholder values.")
 	}
 }
@@ -81,8 +77,16 @@ func read_config() Config {
 		case "ttl":
 			// Parse TTL value from string to integer
 			fmt.Sscanf(value, "%d", &config.TTL)
+		case "update_interval":
+			fmt.Sscanf(value, "%d", &config.UpdateInterval)
 		}
 	}
+
+	// Set a default update interval if not specified
+	if config.UpdateInterval <= 0 {
+		config.UpdateInterval = 5 // Default to 5 minutes
+	}
+
 	return config
 }
 
@@ -221,7 +225,7 @@ func main() {
 	for {
 		config := read_config()
 		
-		 // Don't pre-validate the token - let the API tell us if it's invalid
+		// Don't pre-validate the token - let the API tell us if it's invalid
 		// Just check if it's completely empty
 		if config.DigitalOceanToken == "" {
 			fmt.Println("Error: Digital Ocean API token not found in config. Please update your .env file.")
@@ -241,11 +245,11 @@ func main() {
 		success := update_do_dns(config.DigitalOceanToken, config.DomainName, config.SubDomainName, config.RecordType, ip.IP, config.TTL)
 		
 		if success {
-			fmt.Println("DNS update successful. Next check in 5 minutes.")
+			fmt.Printf("DNS update successful. Next check in %d minutes.\n", config.UpdateInterval)
 		} else {
-			fmt.Println("DNS update failed. Will retry in 5 minutes.")
+			fmt.Printf("DNS update failed. Will retry in %d minutes.\n", config.UpdateInterval)
 		}
 		
-		time.Sleep(5 * time.Minute)
+		time.Sleep(time.Duration(config.UpdateInterval) * time.Minute)
 	}
 }
