@@ -19,7 +19,7 @@ This utility solves the problem of maintaining DNS records when your home or off
 
 - Go 1.13 or higher
 - DigitalOcean account with DNS management
-- A domain managed through DigitalOcean's nameservers
+- A domain managed through DigitalOcean's nameservers 
 
 ## Configuration
 
