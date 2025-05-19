@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Pre-commit Git hook to prevent committing .env files and API tokens
+
+# Check for .env files
+if git diff --cached --name-only | grep -q ".env$"; then
+  echo "ERROR: Attempt to commit .env file detected."
+  echo "Please remove .env files from git staging using:"
+  echo "  git reset -- .env"
+  echo ""
+  echo "Environment files may contain sensitive information like API tokens"
+  echo "that should never be committed to the repository."
+  exit 1
+fi
+
+# Check for potential API tokens in committed files
+if git diff --cached | grep -E 'token|api_key|apikey|secret|password|auth|credential' | grep -iE '[a-z0-9_.-]{20,}'; then
+  echo "WARNING: Possible API token, key, or credential detected in your changes."
+  echo "Please verify that you are not committing sensitive information."
+  echo "To proceed anyway, use --no-verify option (not recommended)."
+  exit 1
+fi
+
+exit 0
