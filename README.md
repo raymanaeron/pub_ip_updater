@@ -23,18 +23,23 @@ This utility solves the problem of maintaining DNS records when your home or off
 
 ## Configuration
 
-When first run, the application will create a `.env` file with default values:
+Copy the example environment file and update with your values:
+
+```bash
+cp .env.example .env
+nano .env  # or use your preferred editor
+```
+
+Configure the following values in your `.env` file:
 
 ```
 digital_ocean_token=YOUR_DIGITAL_OCEAN_TOKEN
-domain_name=aeronlab.net
-sub_domain_name=rayman
+domain_name=example.com
+sub_domain_name=home
 record_type=A
 ttl=3600
 update_interval=5
 ```
-
-Edit this file and replace the values:
 
 - `digital_ocean_token`: Your DigitalOcean API token (create one in the API section of your DigitalOcean account)
 - `domain_name`: The domain name you want to update (e.g., `example.com`)
@@ -42,6 +47,8 @@ Edit this file and replace the values:
 - `record_type`: The DNS record type (typically `A` for IPv4 addresses)
 - `ttl`: Time-To-Live in seconds (3600 = 1 hour)
 - `update_interval`: How often to check for IP changes (in minutes)
+
+> **Security Note**: Never commit your `.env` file containing your actual token. It is added to `.gitignore` by default.
 
 ## Building the Application
 

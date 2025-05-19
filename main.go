@@ -31,20 +31,45 @@ type PublicIP struct {
 // init_config creates a default configuration file (.env) if it doesn't exist
 // with placeholder values for Digital Ocean DNS updates
 func init_config() {
+	// First check if .env.example exists, if not create it
+	if _, err := os.Stat(".env.example"); os.IsNotExist(err) {
+		exampleFile, err := os.Create(".env.example")
+		if err != nil {
+			fmt.Println("Error creating .env.example file:", err)
+			return
+		}
+		defer exampleFile.Close()
+		exampleFile.WriteString("# Example configuration file - COPY THIS TO .env AND ADD YOUR ACTUAL VALUES\n")
+		exampleFile.WriteString("digital_ocean_token=YOUR_DIGITAL_OCEAN_TOKEN\n")
+		exampleFile.WriteString("domain_name=example.com\n")
+		exampleFile.WriteString("sub_domain_name=home\n")
+		exampleFile.WriteString("record_type=A\n")
+		exampleFile.WriteString("ttl=3600\n")
+		exampleFile.WriteString("update_interval=5\n")
+		fmt.Println(".env.example file created.")
+	}
+
+	// Check if real .env exists, if not create it from example
 	if _, err := os.Stat(".env"); os.IsNotExist(err) {
-		file, err := os.Create(".env")
+		fmt.Println("No .env file found. Creating from .env.example...")
+		fmt.Println("IMPORTANT: Edit the .env file to add your actual DigitalOcean token and settings.")
+		fmt.Println("WARNING: Never commit your .env file to version control!")
+		
+		// Copy example to .env
+		exampleData, err := os.ReadFile(".env.example")
+		if err != nil {
+			fmt.Println("Error reading .env.example:", err)
+			return
+		}
+		
+		err = os.WriteFile(".env", exampleData, 0600) // More restrictive permissions (0600)
 		if err != nil {
 			fmt.Println("Error creating .env file:", err)
 			return
 		}
-		defer file.Close()
-		file.WriteString("digital_ocean_token=YOUR_DIGITAL_OCEAN_TOKEN\n")
-		file.WriteString("domain_name=aeronlab.net\n")
-		file.WriteString("sub_domain_name=rayman\n")
-		file.WriteString("record_type=A\n")
-		file.WriteString("ttl=3600\n")
-		file.WriteString("update_interval=5\n")
-		fmt.Println(".env file created with placeholder values.")
+		fmt.Println(".env file created with example values. Please edit it before running the program again.")
+		fmt.Println("Exiting. Please configure your .env file first.")
+		os.Exit(1)
 	}
 }
 
@@ -74,6 +99,12 @@ func read_config() Config {
 		switch key {
 		case "digital_ocean_token":
 			config.DigitalOceanToken = value
+			// Check for placeholder token
+			if value == "YOUR_DIGITAL_OCEAN_TOKEN" {
+				fmt.Println("ERROR: You need to set your actual DigitalOcean API token in the .env file")
+				fmt.Println("Exiting. Please configure your .env file first.")
+				os.Exit(1)
+			}
 		case "domain_name":
 			config.DomainName = value
 		case "sub_domain_name":
