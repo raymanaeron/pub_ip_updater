@@ -70,10 +70,10 @@ Run the application:
 
 ```
 # On Windows
-.\build\pub_ip_updater.exe
+.\build\ip_updater.exe
 
 # On macOS and Linux
-./build/pub_ip_updater
+./build/ip_updater
 ```
 
 The application will:
@@ -103,7 +103,7 @@ Description=Public IP Updater for DigitalOcean DNS
 After=network.target
 
 [Service]
-ExecStart=/path/to/pub_ip_updater/build/pub_ip_updater
+ExecStart=/path/to/pub_ip_updater/build/ip_updater
 WorkingDirectory=/path/to/pub_ip_updater
 Restart=always
 User=yourusername
