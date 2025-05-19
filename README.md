@@ -61,7 +61,7 @@ chmod +x b.sh
 Or build manually:
 ```
 mkdir -p build
-go build -o build/pub_ip_updater main.go
+go build -o build/ip_updater main.go
 ```
 
 ## Usage
@@ -92,7 +92,7 @@ For continuous operation, you might want to set it up as a service/daemon using 
 Create a systemd service file:
 
 ```bash
-sudo nano /etc/systemd/system/pub_ip_updater.service
+sudo nano /etc/systemd/system/ip_updater.service
 ```
 
 Add the following content (adjust paths as needed):
@@ -115,14 +115,6 @@ WantedBy=multi-user.target
 Enable and start the service:
 
 ```bash
-sudo systemctl enable pub_ip_updater
-sudo systemctl start pub_ip_updater
+sudo systemctl enable ip_updater
+sudo systemctl start ip_updater
 ```
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Contributing
-
-Contributions are welcome! Feel free to submit issues or pull requests.
