@@ -7,13 +7,6 @@ if [ ! -d "build" ]; then
     mkdir build
 fi
 
-# Check if pre-commit hook is installed
-if [ ! -f ".git/hooks/pre-commit" ]; then
-    echo "Installing pre-commit hook for security..."
-    cp pre-commit.hook .git/hooks/pre-commit
-    chmod +x .git/hooks/pre-commit
-fi
-
 # Build the executable with custom name
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OS
